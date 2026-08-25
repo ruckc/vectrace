@@ -1,0 +1,40 @@
+# Third-party licenses
+
+vectrace — convert raster images to SVG in the browser.
+Copyright (C) 2026 Curtis Ruck
+
+vectrace is distributed under the GNU General Public License, version 2 or later
+(see LICENSE). That choice is forced by potrace; see "Why GPL" below.
+
+## Bundled / linked components
+
+| Component | Version | License | Notes |
+|---|---|---|---|
+| [vtracer](https://github.com/visioncortex/vtracer) | 1.0.0-alpha.3 | MIT OR Apache-2.0 | Compiled to WebAssembly from `crates/vectrace-wasm`. **We take the MIT arm.** |
+| [visioncortex](https://github.com/visioncortex/visioncortex) | 0.9.x | MIT OR Apache-2.0 | Transitive dependency of vtracer. **We take the MIT arm.** |
+| [flo_curves](https://github.com/Logicalshift/flo_curves) | 0.8.x | Apache-2.0 | Transitive dependency of vtracer. |
+| [potrace](https://potrace.sourceforge.net/) via [esm-potrace-wasm](https://github.com/tomayac/esm-potrace-wasm) | 0.5.x | GPL-2.0-or-later | Planned second tracing engine. |
+| [SVGO](https://github.com/svg/svgo) | 4.x | MIT | Optional post-trace optimization pass. |
+| [SvelteKit](https://github.com/sveltejs/kit) / [Svelte](https://github.com/sveltejs/svelte) | 2.x / 5.x | MIT | Application framework. |
+
+## Why GPL
+
+potrace is GPL-2.0-or-later, and every browser WebAssembly port of it inherits that.
+Because vectrace ships potrace to the user's browser as part of a single combined work,
+the whole application must be GPL-2.0-or-later.
+
+The MIT/Apache-2.0 dependencies are compatible with this: for the dual-licensed Rust
+crates we elect the MIT arm, which is GPL-2.0 compatible (Apache-2.0 alone is not
+compatible with GPL-2.0-only, though it is with the "or later" upgrade path).
+
+`flo_curves` is Apache-2.0 only. This is fine under GPL-2.0-**or-later**, since the
+combined work can be distributed under GPL-3.0, with which Apache-2.0 is compatible.
+
+Source is available at the project repository, satisfying GPL §3.
+
+## If potrace is dropped
+
+vtracer 1.0 has its own binary mode with Bradley-Roth adaptive thresholding
+(`binary_adaptive`, `binary_adaptive_window`, `binary_adaptive_t`) and a `Bw` preset.
+If that proves good enough and the potrace engine is removed, every remaining dependency
+is MIT or Apache-2.0 and the project can be relicensed to MIT.

@@ -1,0 +1,30 @@
+[tools]
+claude = "latest"
+node = "lts"
+npm = "latest"
+rust = "latest"
+"github:rustwasm/wasm-pack" = "latest"
+
+[tasks."build:wasm"]
+description = "compile the vtracer wasm engine into src/lib/wasm"
+run = "wasm-pack build crates/vectrace-wasm --target web --release --no-pack --out-dir ../../src/lib/wasm --out-name vectrace"
+sources = ["crates/vectrace-wasm/src/**/*.rs", "crates/vectrace-wasm/Cargo.toml", "Cargo.lock"]
+outputs = ["src/lib/wasm/vectrace_bg.wasm", "src/lib/wasm/vectrace.js"]
+
+[tasks.dev]
+description = "start the dev server"
+depends = ["build:wasm"]
+run = "npm run dev"
+
+[tasks.build]
+description = "build the static site"
+depends = ["build:wasm"]
+run = "npm run build"
+
+[tasks.flc]
+description = "format, lint, check"
+run = ["npm run format", "npm run lint", "npm run check"]
+
+[tasks.clippy]
+description = "lint the rust crate"
+run = "cargo clippy --manifest-path crates/vectrace-wasm/Cargo.toml --target wasm32-unknown-unknown -- -D warnings"
