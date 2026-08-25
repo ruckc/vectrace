@@ -11,6 +11,25 @@
 
 	const trace = new TraceState();
 
+	// JSON-LD assembled as a string: a literal <script> tag inside svelte:head would be
+	// parsed as component script by the Svelte compiler.
+	const structuredData =
+		'<script type="application/ld+json">' +
+		JSON.stringify({
+			'@context': 'https://schema.org',
+			'@type': 'WebApplication',
+			name: 'vectrace',
+			url: 'https://vectrace.ruck.io/',
+			description:
+				'Convert raster images (PNG, JPG, WebP, GIF, AVIF) to SVG entirely in your browser. Nothing is uploaded.',
+			applicationCategory: 'DesignApplication',
+			operatingSystem: 'Any',
+			browserRequirements: 'Requires JavaScript and WebAssembly',
+			offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+			license: 'https://spdx.org/licenses/GPL-2.0-or-later.html'
+		}) +
+		'<\u002fscript>';
+
 	// Deliberately not awaited: onMount must return a cleanup function, not a promise.
 	onMount(() => {
 		void trace.applyHash(location.hash);
@@ -22,8 +41,37 @@
 	<title>vectrace — image to SVG, in your browser</title>
 	<meta
 		name="description"
+		content="Free image to SVG converter that runs entirely in your browser. Convert PNG, JPG, WebP and GIF to SVG with live tuning — nothing is uploaded, no account, no subscription."
+	/>
+	<link rel="canonical" href="https://vectrace.ruck.io/" />
+	<meta name="theme-color" content="#1e293b" />
+
+	<meta property="og:site_name" content="vectrace" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://vectrace.ruck.io/" />
+	<meta property="og:title" content="vectrace — image to SVG, in your browser" />
+	<meta
+		property="og:description"
 		content="Convert PNG, JPG, WebP and GIF images to SVG entirely in your browser. Nothing is uploaded."
 	/>
+	<meta property="og:image" content="https://vectrace.ruck.io/og.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta
+		property="og:image:alt"
+		content="vectrace logo and tagline: convert images to SVG entirely in your browser"
+	/>
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="vectrace — image to SVG, in your browser" />
+	<meta
+		name="twitter:description"
+		content="Convert PNG, JPG, WebP and GIF images to SVG entirely in your browser. Nothing is uploaded."
+	/>
+	<meta name="twitter:image" content="https://vectrace.ruck.io/og.png" />
+
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- static JSON-LD built from literals above; no user input reaches it -->
+	{@html structuredData}
 </svelte:head>
 
 <main>
