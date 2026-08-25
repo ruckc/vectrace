@@ -37,9 +37,9 @@ jobs:
       - name: Build wasm engine
         run: mise run build:wasm
 
+      # The site is served from the root of the custom domain (vectrace.ruck.io),
+      # so no base path is needed.
       - name: Build site
-        env:
-          BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
       - uses: actions/upload-pages-artifact@v4

@@ -2,8 +2,8 @@ import { defineConfig } from 'vitest/config';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 
-// GitHub Pages serves this as a project page under /vectrace, but dev and preview
-// run at the root. The deploy workflow sets BASE_PATH=/vectrace.
+// The site serves from the root of vectrace.ruck.io, so no base path is set anywhere.
+// BASE_PATH remains supported for anyone deploying a fork under a sub-path.
 const base = (process.env.BASE_PATH ?? '') as '' | `/${string}`;
 
 export default defineConfig({

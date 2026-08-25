@@ -89,9 +89,9 @@ tests/                  Playwright specs and a dependency-free PNG encoder for f
 
 ## Deployment
 
-Pushes to `main` build and publish to GitHub Pages via `.github/workflows/deploy.yml`.
-The site is served as a project page, so the build sets `BASE_PATH=/<repo-name>` and
-SvelteKit emits relative asset URLs.
+Live at **<https://vectrace.ruck.io>**. Pushes to `main` build and publish to GitHub
+Pages via `.github/workflows/deploy.yml`; the custom domain is configured in the
+repository's Pages settings, and the site serves from the domain root.
 
 Repository settings → Pages → Source must be set to **GitHub Actions**.
 
