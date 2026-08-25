@@ -23,6 +23,25 @@ loaded lazily, only once you select it.
 Output optionally goes through [SVGO](https://github.com/svg/svgo) — on by default, with
 the saving shown in the stats bar.
 
+### Black & white separation
+
+Both engines decide what is ink and what is paper by **brightness alone**. That quietly
+fails on two very ordinary logos: one whose fill carries a gradient that crosses the
+cutoff, and one whose colours contrast strongly to the eye but sit at nearly the same
+luminance. In both cases the mark dissolves into the background.
+
+The **Black & white → Separate by** control fixes this by reducing the image to two tones
+_before_ the engine sees it:
+
+| Mode                              | How it decides                                                                                  |
+| --------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Colour** (default for b/w work) | 2-means clustering in RGB. Copes with gradients, and with hue contrast that grayscale destroys. |
+| **Brightness**                    | Otsu's method — an automatic luminance cutoff. Cheaper, but can cut inside a graded mark.       |
+| **Off**                           | Hand the original pixels straight to the engine.                                                |
+
+Images with real transparency are handled by alpha rather than colour, since a cut-out
+already states exactly what the mark is.
+
 ## Development
 
 Tooling is managed by [mise](https://mise.jdx.dev/) (Node, Rust, wasm-pack):

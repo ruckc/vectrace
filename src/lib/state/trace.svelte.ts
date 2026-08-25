@@ -5,7 +5,7 @@
  * when to trace.
  */
 
-import { POTRACE_DEFAULTS } from '$lib/engines/params';
+import { POTRACE_DEFAULTS, PREPARE_DEFAULTS } from '$lib/engines/params';
 import type { AnyParams, EngineId, Phase, PresetName } from '$lib/engines/types';
 import { svgStats, type SvgStats } from '$lib/svg/stats';
 import { TraceClient, type RenderResult } from '$lib/trace/client';
@@ -80,8 +80,21 @@ export class TraceState {
 	 * rather than duplicated here; potrace's live in the schema.
 	 */
 	async #defaultsFor(engine: EngineId, preset: PresetName): Promise<AnyParams> {
-		if (engine === 'potrace') return { ...POTRACE_DEFAULTS };
-		return (await this.#ensureClient().defaults(preset)) as unknown as AnyParams;
+		const engineDefaults =
+			engine === 'potrace'
+				? { ...POTRACE_DEFAULTS }
+				: ((await this.#ensureClient().defaults(preset)) as unknown as AnyParams);
+
+		// Asking for black and white should give black and white. Both engines decide that
+		// by brightness alone, which loses marks whose colours differ in hue rather than
+		// tone, so the b/w paths turn the colour-aware separation on by default.
+		const wantsMonochrome = preset === 'bw' || engine === 'potrace';
+
+		return {
+			...PREPARE_DEFAULTS,
+			...(wantsMonochrome ? { binarize: 'colour' } : {}),
+			...engineDefaults
+		};
 	}
 
 	/** Switch engines, resetting to that engine's defaults. */

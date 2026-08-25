@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { flatArtPng } from './png';
+import { flatArtPng, gradientLogoPng, transparentLogoPng } from './png';
 
 const FIXTURE = { name: 'flat-art.png', mimeType: 'image/png', buffer: flatArtPng() };
 
@@ -181,4 +181,95 @@ test('flat art round-trips back to nearly the same pixels', async ({ page }) => 
 	});
 
 	expect(mismatch).toBeLessThan(0.02);
+});
+
+test('colour separation recovers a logo that brightness thresholding loses', async ({ page }) => {
+	await page.goto('/#p=bw');
+	await page.setInputFiles('input[type=file]', {
+		name: 'gradient-logo.png',
+		mimeType: 'image/png',
+		buffer: gradientLogoPng()
+	});
+	await expect(page.getByAltText('Traced vector output')).toBeVisible({ timeout: 20_000 });
+	// The b/w preset should turn colour separation on for us.
+	await expect(page.locator('#p-binarize')).toHaveValue('colour', { timeout: 20_000 });
+
+	/**
+	 * Share of the canvas covered in ink. The mark — a ring plus a bar — covers about a
+	 * quarter of it. Counting paths would measure SVGO's path merging rather than trace
+	 * quality; coverage measures whether the mark actually survived.
+	 */
+	const inkCoverage = () =>
+		page.evaluate(async () => {
+			const img = document.querySelector<HTMLImageElement>('img[alt="Traced vector output"]')!;
+			const loaded = new Image();
+			await new Promise((res, rej) => {
+				loaded.onload = res;
+				loaded.onerror = rej;
+				loaded.src = img.src;
+			});
+			const c = new OffscreenCanvas(160, 160);
+			const ctx = c.getContext('2d')!;
+			ctx.fillStyle = '#fff';
+			ctx.fillRect(0, 0, 160, 160);
+			ctx.drawImage(loaded, 0, 0, 160, 160);
+			const d = ctx.getImageData(0, 0, 160, 160).data;
+			let dark = 0;
+			for (let i = 0; i < d.length; i += 4) if (d[i] < 128) dark++;
+			return dark / (d.length / 4);
+		});
+
+	await expect.poll(inkCoverage, { timeout: 20_000 }).toBeLessThan(0.45);
+	expect(await inkCoverage()).toBeGreaterThan(0.1);
+
+	// Only black and white should survive: no leftover red or blue.
+	const src = await page.getByAltText('Traced vector output').getAttribute('src');
+	const svg = decodeURIComponent(src!.replace(/^data:image\/svg\+xml;utf8,/, ''));
+	const fills = [...new Set([...svg.matchAll(/fill="([^"]+)"/g)].map((m) => m[1].toUpperCase()))];
+	expect(fills.every((f) => f === '#000000' || f === '#FFFFFF' || f === 'NONE')).toBe(true);
+
+	// Turning separation off floods the canvas — the mark merges into the ground, which is
+	// the failure this whole feature exists to fix.
+	await page.locator('#p-binarize').selectOption('off');
+	await expect.poll(inkCoverage, { timeout: 20_000 }).toBeGreaterThan(0.6);
+});
+
+test('invert flips which side becomes the mark', async ({ page }) => {
+	await page.goto('/#p=bw');
+	await page.setInputFiles('input[type=file]', {
+		name: 'gradient-logo.png',
+		mimeType: 'image/png',
+		buffer: gradientLogoPng()
+	});
+	await expect(page.locator('#p-binarize')).toHaveValue('colour', { timeout: 20_000 });
+
+	const src = await page.getByAltText('Traced vector output').getAttribute('src');
+	await page.locator('#p-invert').check();
+	await expect
+		.poll(() => page.getByAltText('Traced vector output').getAttribute('src'), { timeout: 20_000 })
+		.not.toBe(src);
+});
+
+test('a white mark on a transparent ground survives', async ({ page }) => {
+	await page.goto('/#p=bw');
+	await page.setInputFiles('input[type=file]', {
+		name: 'cutout.png',
+		mimeType: 'image/png',
+		buffer: transparentLogoPng()
+	});
+	await expect(page.getByAltText('Traced vector output')).toBeVisible({ timeout: 20_000 });
+	await expect(page.locator('#p-binarize')).toHaveValue('colour');
+
+	const src = await page.getByAltText('Traced vector output').getAttribute('src');
+	const svg = decodeURIComponent(src!.replace(/^data:image\/svg\+xml;utf8,/, ''));
+
+	// The ring must be traced, not the whole canvas: a transparent ground read as black
+	// would swallow it, and a white matte would erase it.
+	expect(svg).toContain('<path');
+	// Read coordinates from path data only — the xmlns URL contains "2000".
+	const coords = [...svg.matchAll(/\sd="([^"]*)"/g)]
+		.flatMap((m) => [...m[1].matchAll(/-?\d+(?:\.\d+)?/g)])
+		.map((m) => Number(m[0]));
+	expect(coords.length).toBeGreaterThan(0);
+	expect(Math.max(...coords)).toBeLessThanOrEqual(160);
 });

@@ -315,9 +315,41 @@ const POTRACE_GROUPS: Group[] = [
 	}
 ];
 
+/**
+ * Shown for every engine, above the engine's own controls: both engines decide what is
+ * ink and what is paper by brightness alone, which is the wrong question for a logo whose
+ * colours differ in hue, or whose fill carries a gradient.
+ */
+const PREPARE_GROUP: Group = {
+	title: 'Black & white',
+	controls: [
+		{
+			key: 'binarize',
+			label: 'Separate by',
+			help: 'Reduce the image to two tones before tracing. Colour clusters the two dominant colours, so it copes with gradients and with marks that contrast in hue rather than brightness.',
+			kind: 'select',
+			options: [
+				{ value: 'off', label: 'Off — trace as-is' },
+				{ value: 'colour', label: 'Colour (recommended)' },
+				{ value: 'luminance', label: 'Brightness' }
+			]
+		},
+		{
+			key: 'invert',
+			label: 'Invert',
+			help: 'Swap the mark and the ground, for light artwork on a dark background.',
+			kind: 'toggle',
+			visible: (p) => p.binarize !== 'off'
+		}
+	]
+};
+
 export function groupsFor(engine: EngineId): Group[] {
-	return engine === 'potrace' ? POTRACE_GROUPS : VTRACER_GROUPS;
+	return [PREPARE_GROUP, ...(engine === 'potrace' ? POTRACE_GROUPS : VTRACER_GROUPS)];
 }
+
+/** Preprocessing defaults, merged into whatever the engine supplies. */
+export const PREPARE_DEFAULTS = { binarize: 'off', invert: false };
 
 /** Potrace has no wasm-side defaults to ask for, so they live here. */
 export const POTRACE_DEFAULTS = {

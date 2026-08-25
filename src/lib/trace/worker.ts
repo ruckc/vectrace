@@ -14,16 +14,26 @@
 import init, { TraceSession, defaultConfig } from '$lib/wasm/vectrace.js';
 import wasmUrl from '$lib/wasm/vectrace_bg.wasm?url';
 import { trace as potraceTrace } from '$lib/engines/potrace';
+import { binarize, type BinarizeMode } from '$lib/image/binarize';
 import { optimizeSvg } from '$lib/svg/optimize';
 import type { PresetName, RenderTarget, TraceOutput, TraceParams } from '$lib/engines/types';
 import type { Request, Response } from './protocol';
 
 const post = (m: Response) => self.postMessage(m);
 
-/** One entry per resolution: the vtracer session, plus the pixels potrace needs. */
+/**
+ * One entry per resolution.
+ *
+ * `source` is the decoded image; `image` is what the engines actually see, which differs
+ * once preprocessing is on. The vtracer session is built from `image`, so it has to be
+ * rebuilt whenever the preprocessing settings change — `key` records what it was built
+ * from so unrelated parameter changes still hit the cache.
+ */
 interface Loaded {
-	session: TraceSession;
+	source: ImageData;
 	image: ImageData;
+	session: TraceSession;
+	key: string;
 }
 
 let full: Loaded | null = null;
@@ -33,7 +43,13 @@ const ready = init({ module_or_path: wasmUrl }).then(() => {
 	post({ type: 'ready', version: '1.0.0-alpha.3' });
 });
 
-/** Draw a bitmap to a canvas at `scale` and read back its RGBA bytes. */
+/**
+ * Draw a bitmap to a canvas at `scale` and read back its RGBA bytes.
+ *
+ * Alpha is preserved rather than flattened here, because it is genuine signal: for a
+ * cut-out logo it says exactly what the mark is, and `binarize` uses it. Flattening
+ * happens later, and only where it is safe — see `matte`.
+ */
 function toImageData(bitmap: ImageBitmap, scale: number): ImageData {
 	const width = Math.max(1, Math.round(bitmap.width * scale));
 	const height = Math.max(1, Math.round(bitmap.height * scale));
@@ -44,12 +60,67 @@ function toImageData(bitmap: ImageBitmap, scale: number): ImageData {
 	return ctx.getImageData(0, 0, width, height);
 }
 
+/**
+ * Composite over white for engines that read RGB and ignore alpha.
+ *
+ * Without this, the transparent background of a cut-out logo reaches the engine as solid
+ * black — a fresh canvas is transparent *black* — and gets traced as the subject. Returns
+ * the input untouched when the image is already fully opaque.
+ */
+function matte(image: ImageData): ImageData {
+	const src = image.data;
+	let hasAlpha = false;
+	for (let i = 3; i < src.length; i += 4) {
+		if (src[i] < 255) {
+			hasAlpha = true;
+			break;
+		}
+	}
+	if (!hasAlpha) return image;
+
+	const out = new Uint8ClampedArray(src.length);
+	for (let i = 0; i < src.length; i += 4) {
+		const a = src[i + 3] / 255;
+		out[i] = Math.round(src[i] * a + 255 * (1 - a));
+		out[i + 1] = Math.round(src[i + 1] * a + 255 * (1 - a));
+		out[i + 2] = Math.round(src[i + 2] * a + 255 * (1 - a));
+		out[i + 3] = 255;
+	}
+	return new ImageData(out as ImageDataArray, image.width, image.height);
+}
+
+function session(image: ImageData): TraceSession {
+	return new TraceSession(image.width, image.height, new Uint8Array(image.data.buffer));
+}
+
 function load(bitmap: ImageBitmap, scale: number): Loaded {
-	const image = toImageData(bitmap, scale);
-	return {
-		image,
-		session: new TraceSession(image.width, image.height, new Uint8Array(image.data.buffer))
-	};
+	const source = toImageData(bitmap, scale);
+	const image = matte(source);
+	return { source, image, session: session(image), key: 'off|false' };
+}
+
+/** Bring a slot's session in line with the requested preprocessing, reusing it if possible. */
+function prepared(slot: Loaded, mode: BinarizeMode, invert: boolean): Loaded {
+	const key = `${mode}|${invert}`;
+	if (slot.key === key) return slot;
+
+	// `binarize` reads alpha itself and decides what the mark is, so it gets the original.
+	// Everything else needs the transparency flattened first.
+	const image =
+		mode === 'off'
+			? matte(slot.source)
+			: new ImageData(
+					// The DOM types insist on a plain ArrayBuffer here; binarize allocates one.
+					binarize(slot.source.data, mode, invert).data as ImageDataArray,
+					slot.source.width,
+					slot.source.height
+				);
+
+	slot.session.free();
+	slot.image = image;
+	slot.session = session(image);
+	slot.key = key;
+	return slot;
 }
 
 function pick(target: RenderTarget): Loaded {
@@ -111,23 +182,34 @@ async function handle(req: Request): Promise<Response> {
 			return {
 				type: 'loaded',
 				id: req.id,
-				width: full.image.width,
-				height: full.image.height,
+				width: full.source.width,
+				height: full.source.height,
 				previewScale
 			};
 		}
 
 		case 'render': {
-			const loaded = pick(req.target);
 			const started = performance.now();
 
+			// Preprocessing keys are carried alongside the engine's own parameters; strip
+			// them out so neither engine sees a setting it does not understand.
+			const {
+				binarize: mode,
+				invert,
+				...engineParams
+			} = req.params as {
+				binarize?: BinarizeMode;
+				invert?: boolean;
+			} & Record<string, unknown>;
+			const loaded = prepared(pick(req.target), mode ?? 'off', Boolean(invert));
+
 			if (req.engine === 'potrace') {
-				const output = await potraceTrace(loaded.image, req.params);
+				const output = await potraceTrace(loaded.image, engineParams);
 				return finish(req.id, req.target, started, output, req.svgo);
 			}
 
 			const output = loaded.session.renderWithProgress(
-				req.params,
+				engineParams,
 				(phase: string, fraction: number) => {
 					post({ type: 'progress', id: req.id, phase: phase as never, fraction });
 					return false;

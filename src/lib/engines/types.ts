@@ -92,6 +92,17 @@ export interface PotraceParams {
 	posterizelevel: number;
 }
 
+/**
+ * Preprocessing applied before the image reaches any engine. Engine-independent: both
+ * VTracer's binary mode and Potrace benefit, because both threshold on brightness alone.
+ */
+export interface PrepareParams {
+	/** `off`, `colour` (2-means in RGB) or `luminance` (Otsu). */
+	binarize: 'off' | 'colour' | 'luminance';
+	/** Swap which side becomes the mark, for light art on a dark ground. */
+	invert: boolean;
+}
+
 /** Whatever the selected engine takes. Only the engine itself interprets these. */
 export type AnyParams = Record<string, unknown>;
 
