@@ -2,7 +2,8 @@
 claude = "latest"
 node = "lts"
 npm = "latest"
-rust = "latest"
+# clippy/rustfmt for the lint tasks, and the wasm target the crate actually builds for.
+rust = { version = "latest", components = ["clippy", "rustfmt"], targets = ["wasm32-unknown-unknown"] }
 "github:rustwasm/wasm-pack" = "latest"
 
 [tasks."build:wasm"]
