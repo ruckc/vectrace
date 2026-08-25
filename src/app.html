@@ -5,6 +5,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "WebApplication",
+				"name": "vectrace",
+				"url": "https://vectrace.ruck.io/",
+				"description": "Convert raster images (PNG, JPG, WebP, GIF, AVIF) to SVG entirely in your browser. Nothing is uploaded.",
+				"applicationCategory": "DesignApplication",
+				"operatingSystem": "Any",
+				"browserRequirements": "Requires JavaScript and WebAssembly",
+				"offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+				"license": "https://spdx.org/licenses/GPL-2.0-or-later.html"
+			}
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

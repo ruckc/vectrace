@@ -11,25 +11,6 @@
 
 	const trace = new TraceState();
 
-	// JSON-LD assembled as a string: a literal <script> tag inside svelte:head would be
-	// parsed as component script by the Svelte compiler.
-	const structuredData =
-		'<script type="application/ld+json">' +
-		JSON.stringify({
-			'@context': 'https://schema.org',
-			'@type': 'WebApplication',
-			name: 'vectrace',
-			url: 'https://vectrace.ruck.io/',
-			description:
-				'Convert raster images (PNG, JPG, WebP, GIF, AVIF) to SVG entirely in your browser. Nothing is uploaded.',
-			applicationCategory: 'DesignApplication',
-			operatingSystem: 'Any',
-			browserRequirements: 'Requires JavaScript and WebAssembly',
-			offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-			license: 'https://spdx.org/licenses/GPL-2.0-or-later.html'
-		}) +
-		'<\u002fscript>';
-
 	// Deliberately not awaited: onMount must return a cleanup function, not a promise.
 	onMount(() => {
 		void trace.applyHash(location.hash);
@@ -69,9 +50,6 @@
 		content="Convert PNG, JPG, WebP and GIF images to SVG entirely in your browser. Nothing is uploaded."
 	/>
 	<meta name="twitter:image" content="https://vectrace.ruck.io/og.png" />
-
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -- static JSON-LD built from literals above; no user input reaches it -->
-	{@html structuredData}
 </svelte:head>
 
 <main>
