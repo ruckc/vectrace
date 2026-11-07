@@ -58,5 +58,8 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/ruckc/vectrace.git"
+	},
+	"dependencies": {
+		"@ruckc/truss-ui": "^1.7.0"
 	}
 }

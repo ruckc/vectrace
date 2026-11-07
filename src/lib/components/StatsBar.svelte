@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { DescriptionList, Tag, Tooltip } from '@ruckc/truss-ui';
 	import type { SvgStats } from '$lib/svg/stats';
 	import { formatBytes } from '$lib/svg/stats';
 
@@ -21,75 +22,32 @@
 	);
 </script>
 
-<dl>
-	<div>
-		<dt>Size</dt>
-		<dd>{sourceWidth} × {sourceHeight}</dd>
-	</div>
-	<div>
-		<dt>Shapes</dt>
-		<dd>{shapeCount.toLocaleString()}</dd>
-	</div>
+<DescriptionList layout="inline">
+	<dt>Size</dt>
+	<dd>{sourceWidth} × {sourceHeight}</dd>
+	<dt>Shapes</dt>
+	<dd>{shapeCount.toLocaleString()}</dd>
 	{#if stats}
-		<div>
-			<dt>Nodes</dt>
-			<dd>{stats.nodes.toLocaleString()}</dd>
-		</div>
-		<div>
-			<dt>SVG</dt>
-			<dd>
-				{formatBytes(stats.bytes)}
-				{#if saved > 0}
-					<span
-						class="saved"
-						title="SVGO removed {formatBytes(optimized!.beforeBytes - optimized!.afterBytes)}"
-					>
-						−{(saved * 100).toFixed(0)}%
-					</span>
-				{/if}
-			</dd>
-		</div>
+		<dt>Nodes</dt>
+		<dd>{stats.nodes.toLocaleString()}</dd>
+		<dt>SVG</dt>
+		<dd>
+			{formatBytes(stats.bytes)}
+			{#if saved > 0}
+				<Tooltip text="SVGO removed {formatBytes(optimized!.beforeBytes - optimized!.afterBytes)}">
+					<Tag intent="success" size="sm">−{(saved * 100).toFixed(0)}%</Tag>
+				</Tooltip>
+			{/if}
+		</dd>
 	{/if}
-	<div>
-		<dt>Time</dt>
-		<dd>{ms.toFixed(0)} ms</dd>
-	</div>
+	<dt>Time</dt>
+	<dd>{ms.toFixed(0)} ms</dd>
 	{#if isPreview}
-		<div class="note" title="Traced from a downscaled copy for responsiveness">
-			<dt>Quality</dt>
-			<dd>preview</dd>
-		</div>
+		<dt>Quality</dt>
+		<dd>
+			<Tooltip text="Traced from a downscaled copy for responsiveness">
+				<Tag intent="warning" size="sm">preview</Tag>
+			</Tooltip>
+		</dd>
 	{/if}
-</dl>
-
-<style>
-	dl {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.25rem 1.5rem;
-		margin: 0.75rem 0 0;
-		font-size: 0.85rem;
-	}
-
-	div {
-		display: flex;
-		gap: 0.4rem;
-	}
-
-	dt {
-		color: light-dark(#777, #999);
-	}
-
-	dd {
-		margin: 0;
-		font-variant-numeric: tabular-nums;
-	}
-
-	.saved {
-		color: light-dark(#1a7f37, #4ac26b);
-	}
-
-	.note dd {
-		color: light-dark(#a15c00, #e0a458);
-	}
-</style>
+</DescriptionList>
