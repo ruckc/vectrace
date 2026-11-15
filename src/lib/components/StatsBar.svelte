@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { DescriptionList, Tag, Tooltip } from '@ruckc/truss-ui';
-	import type { SvgStats } from '$lib/svg/stats';
-	import { formatBytes } from '$lib/svg/stats';
+	import type { SvgStats } from '#lib/svg/stats';
+	import { formatBytes } from '#lib/svg/stats';
 
 	interface Props {
 		stats: SvgStats | null;

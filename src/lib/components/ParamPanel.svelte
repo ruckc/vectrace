@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Select, Slider, Stack, Switch, Text, Tooltip } from '@ruckc/truss-ui';
-	import { defaultFor, type Control, type Group } from '$lib/engines/params';
-	import type { AnyParams } from '$lib/engines/types';
+	import { defaultFor, type Control, type Group } from '#lib/engines/params';
+	import type { AnyParams } from '#lib/engines/types';
 
 	interface Props {
 		params: AnyParams;
