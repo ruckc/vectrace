@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { AnyParams, TraceParams } from '$lib/engines/types';
+import type { AnyParams, TraceParams } from '#lib/engines/types';
 import { decode, diff, encode } from './urlParams';
 
 const DEFAULTS: TraceParams & AnyParams = {

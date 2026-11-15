@@ -1,6 +1,11 @@
 {
-	"extends": "./.svelte-kit/tsconfig.json",
+	"extends": "$app/tsconfig",
+	"include": ["src"],
+	"exclude": ["build", "src/lib/wasm"],
 	"compilerOptions": {
+		"paths": {
+			"#lib/*": ["./src/lib/*"]
+		},
 		"rewriteRelativeImportExtensions": true,
 		"allowJs": true,
 		"checkJs": true,

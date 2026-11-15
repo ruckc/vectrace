@@ -8,7 +8,7 @@ import type {
 	RenderTarget,
 	TraceOutput,
 	TraceParams
-} from '$lib/engines/types';
+} from '#lib/engines/types';
 
 export type Request =
 	| { type: 'defaults'; id: number; preset: PresetName }
