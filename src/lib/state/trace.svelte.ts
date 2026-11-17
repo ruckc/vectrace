@@ -5,10 +5,10 @@
  * when to trace.
  */
 
-import { POTRACE_DEFAULTS, PREPARE_DEFAULTS } from '$lib/engines/params';
-import type { AnyParams, EngineId, Phase, PresetName } from '$lib/engines/types';
-import { svgStats, type SvgStats } from '$lib/svg/stats';
-import { TraceClient, type RenderResult } from '$lib/trace/client';
+import { POTRACE_DEFAULTS, PREPARE_DEFAULTS } from '#lib/engines/params';
+import type { AnyParams, EngineId, Phase, PresetName } from '#lib/engines/types';
+import { svgStats, type SvgStats } from '#lib/svg/stats';
+import { TraceClient, type RenderResult } from '#lib/trace/client';
 import { decode, diff, encode } from './urlParams';
 
 export type Status = 'idle' | 'decoding' | 'tracing' | 'done' | 'error';

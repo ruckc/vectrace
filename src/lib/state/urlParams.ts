@@ -5,8 +5,8 @@
  * short and — more usefully — means a link stays meaningful if upstream changes a default.
  */
 
-import type { AnyParams, EngineId, PresetName } from '$lib/engines/types';
-import { ENGINES, PRESETS } from '$lib/engines/types';
+import type { AnyParams, EngineId, PresetName } from '#lib/engines/types';
+import { ENGINES, PRESETS } from '#lib/engines/types';
 
 export interface Shared {
 	engine: EngineId;

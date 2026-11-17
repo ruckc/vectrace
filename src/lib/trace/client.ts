@@ -15,7 +15,7 @@ import type {
 	RenderTarget,
 	TraceOutput,
 	TraceParams
-} from '$lib/engines/types';
+} from '#lib/engines/types';
 import type { Request, Response } from './protocol';
 
 /** Longest edge of the downscaled copy used for live previews. */

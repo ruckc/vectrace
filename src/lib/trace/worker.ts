@@ -11,12 +11,12 @@
  * incoming message. The UI keeps at most one render in flight instead; see `client.ts`.
  */
 
-import init, { TraceSession, defaultConfig } from '$lib/wasm/vectrace.js';
-import wasmUrl from '$lib/wasm/vectrace_bg.wasm?url';
-import { trace as potraceTrace } from '$lib/engines/potrace';
-import { binarize, type BinarizeMode } from '$lib/image/binarize';
-import { optimizeSvg } from '$lib/svg/optimize';
-import type { PresetName, RenderTarget, TraceOutput, TraceParams } from '$lib/engines/types';
+import init, { TraceSession, defaultConfig } from '#lib/wasm/vectrace.js';
+import wasmUrl from '#lib/wasm/vectrace_bg.wasm?url';
+import { trace as potraceTrace } from '#lib/engines/potrace';
+import { binarize, type BinarizeMode } from '#lib/image/binarize';
+import { optimizeSvg } from '#lib/svg/optimize';
+import type { PresetName, RenderTarget, TraceOutput, TraceParams } from '#lib/engines/types';
 import type { Request, Response } from './protocol';
 
 const post = (m: Response) => self.postMessage(m);
