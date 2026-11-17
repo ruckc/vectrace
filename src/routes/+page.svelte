@@ -16,14 +16,14 @@
 		Switch,
 		Text
 	} from '@ruckc/truss-ui';
-	import CompareView from '$lib/components/CompareView.svelte';
-	import Dropzone from '$lib/components/Dropzone.svelte';
-	import ExportBar from '$lib/components/ExportBar.svelte';
-	import ParamPanel from '$lib/components/ParamPanel.svelte';
-	import StatsBar from '$lib/components/StatsBar.svelte';
-	import { groupsFor } from '$lib/engines/params';
-	import { ENGINES, PRESETS, type EngineId, type PresetName } from '$lib/engines/types';
-	import { TraceState } from '$lib/state/trace.svelte';
+	import CompareView from '#lib/components/CompareView.svelte';
+	import Dropzone from '#lib/components/Dropzone.svelte';
+	import ExportBar from '#lib/components/ExportBar.svelte';
+	import ParamPanel from '#lib/components/ParamPanel.svelte';
+	import StatsBar from '#lib/components/StatsBar.svelte';
+	import { groupsFor } from '#lib/engines/params';
+	import { ENGINES, PRESETS, type EngineId, type PresetName } from '#lib/engines/types';
+	import { TraceState } from '#lib/state/trace.svelte';
 
 	const trace = new TraceState();
 
