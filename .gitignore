@@ -28,3 +28,6 @@ test-results
 target/
 /src/lib/wasm
 playwright-report
+
+# Tool caches and agent state (never commit)
+.ruckcode/
