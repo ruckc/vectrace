@@ -1,0 +1,20 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@11.19.1
+2 info using node@v24.22.2
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/work/wt/run-919-0/.npmrc
+5 silly config load:file:/home/enzarb/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm view husky version
+8 verbose argv "view" "husky" "version"
+9 verbose logfile logs-max:10 dir:/work/wt/run-919-0/.npm_cache/_logs/2026-11-25T06_13_37_033Z-
+10 verbose logfile /work/wt/run-919-0/.npm_cache/_logs/2026-11-25T06_13_37_033Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly logfile done cleaning log files
+13 http fetch GET 200 https://registry.npmjs.org/husky 257ms (cache revalidated)
+14 verbose cwd /work/wt/run-919-0
+15 verbose os Linux 4.19.0-gvisor
+16 verbose node v24.22.2
+17 verbose npm  v11.19.1
+18 verbose exit 0
+19 info ok
