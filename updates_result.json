@@ -1,0 +1,121 @@
+{
+  "updates": [
+    {
+      "package": "@ruckc/truss-ui",
+      "ecosystem": "npm",
+      "old": "1.7.0",
+      "new": "1.47.0",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "@playwright/test",
+      "ecosystem": "npm",
+      "old": "1.60.0",
+      "new": "1.65.1",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "@sveltejs/adapter-static",
+      "ecosystem": "npm",
+      "old": "4.0.0",
+      "new": "4.0.1",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "@sveltejs/kit",
+      "ecosystem": "npm",
+      "old": "3.0.0",
+      "new": "3.4.0",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "@sveltejs/vite-plugin-svelte",
+      "ecosystem": "npm",
+      "old": "7.1.2",
+      "new": "7.3.2",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "eslint",
+      "ecosystem": "npm",
+      "old": "10.4.1",
+      "new": "10.15.0",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "eslint-plugin-svelte",
+      "ecosystem": "npm",
+      "old": "3.19.0",
+      "new": "3.24.1",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "globals",
+      "ecosystem": "npm",
+      "old": "17.6.0",
+      "new": "17.14.0",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "lint-staged",
+      "ecosystem": "npm",
+      "old": "17.3.0",
+      "new": "17.6.2",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "prettier",
+      "ecosystem": "npm",
+      "old": "3.8.3",
+      "new": "3.10.1",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "prettier-plugin-svelte",
+      "ecosystem": "npm",
+      "old": "4.1.0",
+      "new": "4.2.0",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "svelte",
+      "ecosystem": "npm",
+      "old": "5.56.1",
+      "new": "5.59.1",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "svelte-check",
+      "ecosystem": "npm",
+      "old": "4.6.0",
+      "new": "4.7.8",
+      "type": "direct",
+      "why": "update"
+    },
+    {
+      "package": "typescript-eslint",
+      "ecosystem": "npm",
+      "old": "8.60.1",
+      "new": "8.74.0",
+      "type": "direct",
+      "why": "update"
+    }
+  ],
+  "majors_skipped": [
+    "@types/node 24 -> 26.6.7",
+    "typescript 6.0.3 -> 7.0.2",
+    "vitest 4.1.12 -> 5.1.1"
+  ]
+}
