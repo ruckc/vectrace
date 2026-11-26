@@ -75,8 +75,10 @@
 			variant="minimal"
 			icon="github"
 			href="https://github.com/ruckc/vectrace"
-			aria-label="vectrace on GitHub">GitHub</Button
+			aria-label="vectrace on GitHub"
 		>
+			GitHub
+		</Button>
 	{/snippet}
 </Navbar>
 
@@ -164,8 +166,10 @@
 									variant="minimal"
 									size="sm"
 									disabled={trace.isPristine}
-									onclick={() => trace.resetParams()}>Reset</Button
+									onclick={() => trace.resetParams()}
 								>
+									Reset
+								</Button>
 							{/snippet}
 							<Stack gap={4}>
 								<ParamPanel
